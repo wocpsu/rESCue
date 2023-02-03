@@ -75,7 +75,7 @@ void setup() {
      return;
   }
 
-  ledController = LedControllerFactory::getInstance()->createLedController(&vescData);
+  //ledController = LedControllerFactory::getInstance()->createLedController(&vescData);
 
   pinMode(PIN_FORWARD, INPUT);
   pinMode(PIN_BACKWARD, INPUT);
@@ -97,16 +97,16 @@ void setup() {
   bleServer->init(&vesc);
 #endif
   // initialize the LED (either COB or Neopixel)
-  ledController->init();
+ // ledController->init();
 
-  Buzzer::getInstance()->startSequence();
-  ledController->startSequence();
+ // Buzzer::getInstance()->startSequence();
+ // ledController->startSequence();
 
   char buf[128];
   snprintf(buf, 128, " sw-version %d.%d.%d is happily running on hw-version %d.%d",
     SOFTWARE_VERSION_MAJOR, SOFTWARE_VERSION_MINOR, SOFTWARE_VERSION_PATCH,
     HARDWARE_VERSION_MAJOR, HARDWARE_VERSION_MINOR);
-  Logger::notice("rESCue", buf);
+  Logger::notice("BonCurs", buf);
 }
 
 void loop() {
@@ -152,11 +152,11 @@ void loop() {
   // is motor brake active?
   if(new_brake == HIGH) {
     // flash backlights
-    ledController->changePattern(Pattern::RESCUE_FLASH_LIGHT, new_forward == HIGH, false);
+    //ledController->changePattern(Pattern::RESCUE_FLASH_LIGHT, new_forward == HIGH, false);
   }
 
   // call the led controller loop
-  ledController->loop(&new_forward, &new_backward, &idle);
+  //ledController->loop(&new_forward, &new_backward, &idle);
 
   // measure and check voltage
   batMonitor->checkValues();

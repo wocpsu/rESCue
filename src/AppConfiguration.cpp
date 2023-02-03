@@ -12,7 +12,7 @@ AppConfiguration* AppConfiguration::getInstance() {
 }
 void AppConfiguration::readPreferences() {
     String json = "";
-    if(!preferences.begin("rESCue", true)) {
+    if(!preferences.begin("BonCurs", true)) {
         log_e("no config file found");
     } else {
         log_n("found config file");
@@ -21,7 +21,7 @@ void AppConfiguration::readPreferences() {
     StaticJsonDocument<1024> doc;
     deserializeJson(doc, json);
     log_n("readPreferences: %s", json.c_str());
-    config.deviceName = doc["deviceName"] | "rESCue";
+    config.deviceName = doc["deviceName"] | "BonCurs";
     config.otaUpdateActive = doc["otaUpdateActive"] | false;
     config.isNotificationEnabled = doc["isNotificationEnabled"] | false;
     config.isBatteryNotificationEnabled = doc["isBatteryNotificationEnabled"] | false;
@@ -69,7 +69,7 @@ void AppConfiguration::readPreferences() {
 }
 
 void AppConfiguration::savePreferences() {
-    preferences.begin("rESCue", false);
+    preferences.begin("BonCurs", false);
     StaticJsonDocument<1024> doc;
     doc["deviceName"] = config.deviceName;
     doc["otaUpdateActive"] = config.otaUpdateActive;
