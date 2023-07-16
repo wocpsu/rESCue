@@ -18,7 +18,7 @@ int new_backward = LOW;
 int new_brake    = LOW;
 int idle         = LOW;
 double idle_erpm = 10.0;
-
+#define LEDPIN 13
 int lastFake = 4000;
 int lastFakeCount = 0;
 VescData vescData;
@@ -63,7 +63,9 @@ void fakeCanbusValues() {
 
 void setup() {
   Logger::setOutputFunction(localLogger);
-
+  pinMode(LEDPIN,OUTPUT);
+  delay(100);
+  digitalWrite(LEDPIN,HIGH);
   AppConfiguration::getInstance()->readPreferences();
     AppConfiguration::getInstance()->config.sendConfig = false;
   Logger::setLogLevel(AppConfiguration::getInstance()->config.logLevel);
@@ -101,7 +103,7 @@ void setup() {
 
  // Buzzer::getInstance()->startSequence();
  // ledController->startSequence();
-
+   
   char buf[128];
   snprintf(buf, 128, " sw-version %d.%d.%d is happily running on hw-version %d.%d",
     SOFTWARE_VERSION_MAJOR, SOFTWARE_VERSION_MINOR, SOFTWARE_VERSION_PATCH,
