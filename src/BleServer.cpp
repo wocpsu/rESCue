@@ -1,5 +1,6 @@
 #include "BleServer.h"
 #include "BlynkPins.h"
+
 #include <Logger.h>
 #include <sstream>
 #include "esp_bt_main.h"
@@ -113,9 +114,11 @@ inline
 void BleServer::onConnect(NimBLEServer *pServer, ble_gap_conn_desc *desc) {
     char buf[128];
     snprintf(buf, 128, "Client connected: %s",  NimBLEAddress(desc->peer_ota_addr).toString().c_str());
+    //NimBLEAddress(desc->conn_handle);
     Logger::notice(LOG_TAG_BLESERVER, buf);
     Logger::notice(LOG_TAG_BLESERVER, "Multi-connect support: start advertising");
     deviceConnected = true;
+    pServer->updateConnParams(desc->conn_handle,15,30,desc->conn_latency,desc->supervision_timeout);
     NimBLEDevice::startAdvertising();
 };
 
@@ -133,6 +136,7 @@ void BleServer::onMTUChange(uint16_t MTU, ble_gap_conn_desc* desc) {
     char buf[128];
     snprintf(buf, 128, "MTU changed - new size %d, peer %s", MTU, NimBLEAddress(desc->peer_ota_addr).toString().c_str());
     Logger::notice(LOG_TAG_BLESERVER, buf);
+    pServer->updateConnParams(desc->conn_handle,6,25,0,desc->supervision_timeout);
     MTU_SIZE = MTU;
     BLE_PACKET_SIZE = MTU_SIZE - 3;
 }
@@ -158,6 +162,7 @@ void BleServer::init(Stream *vesc) {
     // Create the BLE Server
     pServer = NimBLEDevice::createServer();
     pServer->setCallbacks(this);
+    //pServer->setCallbacks(this);
     auto pSecurity = new NimBLESecurity();
     pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
 
@@ -172,7 +177,7 @@ void BleServer::init(Stream *vesc) {
             NIMBLE_PROPERTY::NOTIFY |
             NIMBLE_PROPERTY::READ
     );
-    //pCharacteristicVescTx->setValue("VESC TX");
+    pCharacteristicVescTx->setValue("VESC TX");
     pCharacteristicVescTx->setCallbacks(this);
 
     // Create a BLE Characteristic for VESC RX
@@ -181,7 +186,7 @@ void BleServer::init(Stream *vesc) {
             NIMBLE_PROPERTY::WRITE |
             NIMBLE_PROPERTY::WRITE_NR
     );
-    //pCharacteristicVescRx->setValue("VESC RX");
+    pCharacteristicVescRx->setValue("VESC RX");
     pCharacteristicVescRx->setCallbacks(this);
 
     // Create a BLE Characteristic
@@ -224,8 +229,8 @@ void BleServer::init(Stream *vesc) {
     pAdvertising->addServiceUUID(RESCUE_SERVICE_UUID);
     pAdvertising->setAppearance(0x00);
     pAdvertising->setScanResponse(true);
-    pAdvertising->setMinPreferred(0x0);  // set value to 0x00 to not advertise this parameter
-
+    pAdvertising->setMinPreferred(0X00);  // set value to 0x00 to not advertise this parameter /**< Minimum acceptable connection interval (7.5 ms), Connection interval uses 1.25 ms units. */
+    //pAdvertising->setMaxPreferred(25);  // set value to 0x00 to not advertise this parameter /**< Maximum acceptable connection interval (75 ms), Connection interval uses 1.25 ms units. */
     pAdvertising->start();
     Logger::notice(LOG_TAG_BLESERVER, "waiting a client connection to notify...");
 }
@@ -271,6 +276,13 @@ void BleServer::loop(VescData *vescData, long loopTime, long maxLoopTime) {
     if (deviceConnected && !oldDeviceConnected) {
         // do stuff here on connecting
         oldDeviceConnected = deviceConnected;
+        //NimBLEServer *pServer = NimBLEDevice::getServer();
+        //pServer->updateConnParams->
+        //NimBLEAddress(desc->peer_ota_addr)
+        //NimBLEAddress(desc->
+        //pServer->updateConnParams(NimBLEAddress(desc->pe)
+        //pAdvertising->setMinInterval(6);  // set value to 0x00 to not advertise this parameter /**< Minimum acceptable connection interval (7.5 ms), Connection interval uses 1.25 ms units. */
+        //pAdvertising->setMaxInterval(25);
     }
 
 #ifdef CANBUS_ENABLED

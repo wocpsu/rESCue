@@ -51,6 +51,9 @@
 
 ////#define FAKE_VESC_ENABLED
 
+//If we want to use BLE Classic instead od BLE uncomment this
+#define BT_CLASSIC_VESC
+
 #endif //__CONFIG_H__
 
 /**** Calibration / Calculation of VOLTAGE_DIVIDER_CONSTANT ****
