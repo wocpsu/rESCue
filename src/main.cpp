@@ -15,12 +15,6 @@
 #include "CanBus.h"
 #include "AppConfiguration.h"
 
-<<<<<<< Updated upstream
-unsigned long mainLoop = 0;
-unsigned long loopTime = 0;
-unsigned long maxLoopTime = 0;
-int new_forward = LOW;
-=======
 //BT_CLASSIC_VESC
 #ifdef BT_CLASSIC_VESC
   #include "BluetoothSerial.h"
@@ -31,7 +25,6 @@ long mainLoop = 0;
 long loopTime = 0;
 long maxLoopTime = 0;
 int new_forward  = LOW;
->>>>>>> Stashed changes
 int new_backward = LOW;
 int new_brake = LOW;
 int idle = LOW;
@@ -117,12 +110,7 @@ void setup() {
 #ifdef CANBUS_ONLY
     bleServer->init(canbus->stream, canbus);
 #else
-<<<<<<< Updated upstream
-    bleServer->init(&vesc);
-#endif
-    // initialize the LED (either COB or Neopixel)
-    ledController->init();
-=======
+
   #ifndef BT_CLASSIC_VESC
    bleServer->init(&vesc);
   #endif
@@ -133,8 +121,7 @@ SerialBT.begin("BoncursClassic");
 #endif
 
   // initialize the LED (either COB or Neopixel)
- // ledController->init();
->>>>>>> Stashed changes
+  ledController->init();
 
     Buzzer::getInstance()->startSequence();
     ledController->startSequence();
@@ -147,25 +134,7 @@ SerialBT.begin("BoncursClassic");
 }
 
 void loop() {
-<<<<<<< Updated upstream
-    loopTime = millis() - mainLoop;
-    mainLoop = millis();
-    if (loopTime > maxLoopTime) {
-        maxLoopTime = loopTime;
-    }
 
-    if (AppConfiguration::getInstance()->config.otaUpdateActive) {
-        return;
-    }
-    if (AppConfiguration::getInstance()->config.sendConfig) {
-        bleServer->sendConfig();
-        AppConfiguration::getInstance()->config.sendConfig = false;
-    }
-    if (AppConfiguration::getInstance()->config.saveConfig) {
-        AppConfiguration::getInstance()->savePreferences();
-        AppConfiguration::getInstance()->config.saveConfig = false;
-    }
-=======
   //   loopTime = millis() - mainLoop;
   //   mainLoop = millis() ;
   //   if(loopTime > maxLoopTime) {
@@ -184,7 +153,6 @@ void loop() {
   //     AppConfiguration::getInstance()->savePreferences();
   //     AppConfiguration::getInstance()->config.saveConfig = false;
   // }
->>>>>>> Stashed changes
 
 #ifdef CANBUS_ENABLED
 #ifdef FAKE_VESC_ENABLED
@@ -196,17 +164,11 @@ void loop() {
     idle = (abs(vescData.erpm) < idle_erpm && vescData.switchState == 0) ? HIGH : LOW;
     new_brake = (abs(vescData.erpm) > idle_erpm && vescData.current < -4.0) ? HIGH : LOW;
 #else
-<<<<<<< Updated upstream
-    new_forward  = digitalRead(PIN_FORWARD);
-    new_backward = digitalRead(PIN_BACKWARD);
-    new_brake    = digitalRead(PIN_BRAKE);
-    idle         = new_forward == LOW && new_backward == LOW;
-=======
+
  // new_forward  = digitalRead(PIN_FORWARD);
  // new_backward = digitalRead(PIN_BACKWARD);
  // new_brake    = digitalRead(PIN_BRAKE);
  // idle         = new_forward == LOW && new_backward == LOW;
->>>>>>> Stashed changes
 #endif
 
 #ifdef CANBUS_ENABLED
@@ -221,20 +183,15 @@ void loop() {
     // measure and check voltage
     batMonitor->checkValues();
 
-<<<<<<< Updated upstream
-    // call the VESC UART-to-Bluetooth bridge
-=======
+
   // measure and check voltage
   //batMonitor->checkValues();
 
   // call the VESC UART-to-Bluetooth bridge
->>>>>>> Stashed changes
 #ifdef CANBUS_ENABLED
     bleServer->loop(&vescData, loopTime, maxLoopTime);
 #else
-<<<<<<< Updated upstream
-    bleServer->loop();
-=======
+
   #ifndef BT_CLASSIC_VESC
    bleServer->loop();
   #else
@@ -247,7 +204,6 @@ void loop() {
       vesc.write(SerialBT.read());
     }
   #endif
->>>>>>> Stashed changes
 #endif
 //delay(5);
 }
